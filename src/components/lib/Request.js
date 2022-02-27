@@ -132,7 +132,10 @@ const requestToAPI = {
                 },
                 credentials: "omit"
             };
-            fetch(BASE_URL + "/" + requestToAPI.getUrl(url), options)
+            //console.log('options', options);
+            const currentURL = BASE_URL + "/" + requestToAPI.getUrl(url);
+            //console.log('currentURL', currentURL);
+            fetch(currentURL, options)
                 .then(response => {
                     if (!response.ok) {
                         let status = response.status,
