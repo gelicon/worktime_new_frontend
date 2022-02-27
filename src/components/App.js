@@ -7,8 +7,7 @@ import 'antd/dist/antd.css';
 import { Layout, Menu, Button, Popover, Form, Drawer } from 'antd';
 import {
     UserOutlined, AppstoreOutlined, LogoutOutlined,
-    MenuOutlined, CloseOutlined, BankOutlined, ShopOutlined,
-    QuestionCircleOutlined,SecurityScanOutlined
+    MenuOutlined, CloseOutlined, BankOutlined, ShopOutlined
 } from '@ant-design/icons';
 import { Link } from "react-router-dom";
 import requestToAPI from "./lib/Request";
@@ -16,13 +15,13 @@ import { logout, restoreToken, userProps } from "./lib/LoginForm";
 import logo from '../resources/images/logo.png';
 import teg from '../resources/images/teg.png';
 import {
-    MODULE_CREDENTIAL, MODULE_AUDIT, MODULE_CONFIG,
-    MODULE_EDIZM, MODULE_REQUEST,
-    CONTOURS_WITH_MODULES, CONTOUR_ADMIN, CONTOUR_DOCUMENTS, MODULES, MODULE_PRICE
+    MODULE_CREDENTIAL, 
+    MODULE_EDIZM,
+    CONTOURS_WITH_MODULES, CONTOUR_ADMIN, MODULES, CONTOUR_REFBOOKS
 } from "./lib/ModuleConst";
 import { ChangePasswordForm } from "./lib/ChangePasswordForm";
 import { ShowModal } from "./lib/EditForm";
-import { buildURL, buildMobileButtons, getCapClassTypeName, getItemFromLocalStorage } from "./lib/Utils";
+import { buildURL, buildMobileButtons, getItemFromLocalStorage } from "./lib/Utils";
 
 import { DesktopOrTabletScreen, MobileScreen, setMobile } from './lib/Responsive'
 import { useMediaQuery } from 'react-responsive'
@@ -39,75 +38,36 @@ const { Content, Sider } = Layout;
 // здесь левое меню, в зависимости от subsystem
 const getSubMenu = (sys, clsMenuName) => {
     // Получим список всех модулей выбранного контура
+    console.log("sys=", sys);
     let allModules = [];
     CONTOURS_WITH_MODULES.forEach((value, key) => {
         if (key.name === sys) {
             allModules.push(...value);
         }
     });
+    console.log("allModules=", allModules);
     // Получим список всех доступных пользовтелю модулей
-    const modules = (JSON.parse(getItemFromLocalStorage("modules")) ?? []).map(value => value.applicationExe.toLowerCase());
+    const applicationList = getItemFromLocalStorage("modules");
+    //console.log("applicationList=", applicationList);
+    const modules = (JSON.parse(applicationList) ?? []).map(value => value.applicationExe.toLowerCase());
+    console.log("modules=", modules);
     // Отфильтруем список модулей контура так, чтобы остались только доступные пользователю модули контура
     const allowModules = allModules.filter(value => modules.indexOf(value.name) !== -1);
+    console.log("allowModules=", allowModules);
 
     const clsmmenu = clsMenuName || "main-menu";
 
     let menuItems = [];
     let menuItemsAdmin = [];
+    let menuItemsRefbooks = [];
     allowModules.forEach(value => {
         switch (value.name) {
             case MODULE_EDIZM.name:
-                menuItems.push(
+                menuItemsRefbooks.push(
                     <Menu.Item className={clsmmenu} key={MODULE_EDIZM.name} icon={<AppstoreOutlined />}>
                         <Link to="/edizm">{MODULE_EDIZM.title}</Link>
                     </Menu.Item>
                 );
-                break;
-            case MODULE_REQUEST.name:
-                menuItems.push(
-                    <SubMenu key={MODULE_REQUEST.name} title={MODULE_REQUEST.title} icon={MODULE_REQUEST.icon}>
-                        <Menu.Item key={MODULE_REQUEST.name + ".sm1"} >
-                            <Link to="/requestout">Исходящие заказы</Link>
-                        </Menu.Item>
-                        <Menu.Item key={MODULE_REQUEST.name + ".sm2"}>
-                            <Link to="/requestin">Входящие заказы</Link>
-                        </Menu.Item>
-                        {/*
-                        <Menu.Item key={MODULE_REQUEST.name + ".sm3"}>
-                            <Link to="/testrequest">Заказы по реестрам ПВП</Link>
-                        </Menu.Item>
-                        <Menu.Item key={MODULE_REQUEST.name + ".sm4"}>
-                            <Link to="/testrequest">Реестры заказов ПВП</Link>
-                        </Menu.Item>
-                        */}
-                        <SubMenu className={clsmmenu} key={MODULE_REQUEST.name + ".ref"} title="Справочники">
-                            <Menu.Item key={MODULE_REQUEST.name + ".ref.137"}>
-                                <Link to={"/capclass/137/" + CONTOUR_DOCUMENTS.name + "/" + MODULE_REQUEST.name}>{getCapClassTypeName(137)}</Link>
-                            </Menu.Item>
-                            <Menu.Item key={MODULE_REQUEST.name + ".ref.138"}>
-                                <Link to={"/capclass/138/" + CONTOUR_DOCUMENTS.name + "/" + MODULE_REQUEST.name}>{getCapClassTypeName(138)}</Link>
-                            </Menu.Item>
-                        </SubMenu>
-                    </SubMenu>
-                );
-                break;
-            case MODULE_PRICE.name:
-                menuItems.push(
-                    <SubMenu key={MODULE_PRICE.name} title={MODULE_PRICE.title} icon={MODULE_PRICE.icon}>
-                        {(userProps && userProps.parent) ?
-                            <Menu.Item key={MODULE_PRICE.name + ".sm1"} >
-                                <Link to="/pricesupplier">Прайс-лист поставщика</Link>
-                            </Menu.Item> : ""}
-                        <Menu.Item key={MODULE_PRICE.name + ".sm2"}>
-                            <Link to="/price">Прайс-лист для реализации</Link>
-                        </Menu.Item>
-                    </SubMenu>
-                );
-                menuItems.push(
-                    <Menu.Item key={"documentation"} icon={<QuestionCircleOutlined />} onClick={() => window.open('/doc.pdf')}>
-                        Документация
-                    </Menu.Item>
-                )
                 break;
             case MODULE_CREDENTIAL.name:
                 menuItemsAdmin.push(
@@ -127,37 +87,21 @@ const getSubMenu = (sys, clsMenuName) => {
                     </SubMenu>
                 );
                 break;
-            case MODULE_AUDIT.name:
-                menuItemsAdmin.push(
-                    <SubMenu className={clsmmenu} key={MODULE_AUDIT.name} title={MODULE_AUDIT.title}>
-                        <Menu.Item key={MODULE_AUDIT.name + ".sm1"} >
-                            <Link to="/audit">Просмотр логов</Link>
-                        </Menu.Item>
-                        <Menu.Item key={MODULE_AUDIT.name + ".sm2"} icon={<SecurityScanOutlined />}>
-                            <Link to="/session">Сессии</Link>
-                        </Menu.Item>
-                    </SubMenu>
-                );
-                break;
-            case MODULE_CONFIG.name:
-                menuItemsAdmin.push(
-                    <Menu.Item key={MODULE_CONFIG.name + ".sm1"} >
-                    <Link to="/document">Документы</Link>
-                </Menu.Item>
-                );    
-                menuItemsAdmin.push(
-                        <SubMenu className={clsmmenu} key={MODULE_CONFIG.name + ".resources"} title="Ресурсы">
-                        </SubMenu>
-                );
-                break;
             default:
         }
     });
-    
+    // Засунем меню в подменю контура
     if (menuItemsAdmin.length > 0) {
         menuItems.push(
             <SubMenu key={CONTOUR_ADMIN.name} title={CONTOUR_ADMIN.title} icon={CONTOUR_ADMIN.icon}>
                 {menuItemsAdmin}
+            </SubMenu>
+        );
+    }
+    if (menuItemsRefbooks.length > 0) {
+        menuItems.push(
+            <SubMenu key={CONTOUR_REFBOOKS.name} title={CONTOUR_REFBOOKS.title} icon={CONTOUR_REFBOOKS.icon}>
+                {menuItemsRefbooks}
             </SubMenu>
         );
     }
@@ -281,10 +225,7 @@ const App = (props) => {
     const moduleName = MODULES[(typeof (props.menu) === "string" ? props.menu : props.menu[0])];
     document.title = moduleName ?? "Worktime New";
     let defaultOpenKeys = Array.isArray(props.menu) ? props.menu : [props.menu];
-    if ([MODULE_CREDENTIAL.name, MODULE_AUDIT.name, MODULE_CONFIG.name].indexOf(defaultOpenKeys[0]) !== -1) {
-        if (MODULE_CONFIG.name == defaultOpenKeys[0]) {
-            defaultOpenKeys.shift();
-        }
+    if ([MODULE_CREDENTIAL.name].indexOf(defaultOpenKeys[0]) !== -1) {
         defaultOpenKeys.unshift(CONTOUR_ADMIN.name);
     }
 

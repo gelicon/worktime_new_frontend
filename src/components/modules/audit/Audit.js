@@ -14,7 +14,7 @@ import {
 import { MoreOutlined } from '@ant-design/icons';
 import { buildURL, drawDate } from "../../lib/Utils";
 import EditForm from "../../lib/EditForm";
-import { CONTOUR_ADMIN, MODULE_AUDIT } from "../../lib/ModuleConst"
+import { CONTOUR_ADMIN } from "../../lib/ModuleConst"
 import { buildPrintMenu, buildEntityPrintMenu } from '../../lib/stddialogs/PrintDialog';
 import AuditForm from './AuditForm';
 import { DateInputRange } from '../../lib/DateInput';
@@ -28,7 +28,6 @@ import { responsiveMobileColumn, isMobile } from '../../lib/Responsive';
 const MOD_TITLE = "Просмотр логов";
 const MODE_HELP_ID = "/help/audit";
 const CONTOUR = CONTOUR_ADMIN;
-const MODULE = MODULE_AUDIT;
 
 // Сущность (в CamelCase)
 const ENTITY = "Log";
