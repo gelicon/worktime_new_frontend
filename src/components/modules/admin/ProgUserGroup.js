@@ -1,39 +1,30 @@
 import React from 'react';
-import { Button, Menu, Dropdown, Form, InputNumber } from 'antd';
+import { Button, Menu, Dropdown, Form } from 'antd';
 import DataTable from "../../lib/DataTable";
 import App from '../../App';
 import ModuleHeader from "../../lib/ModuleHeader";
-import { FilterPanelExt, Primary } from "../../lib/FilterPanelExt";
-import {transformRange} from '../../lib/FilterUtils';
-import { FilterButton } from '../../lib/FilterButton';
+import { FilterPanelExt } from "../../lib/FilterPanelExt";
 import { withRouter } from "react-router";
-import {
-    BUTTON_REFRESH_LABEL, DEFAULT_TABLE_CONTEXT,
-    EVENT_KINDS
-} from "../../lib/Const";
+import EditForm, {  } from "../../lib/EditForm";
+import { BUTTON_ADD_LABEL, BUTTON_DEL_LABEL, BUTTON_REFRESH_LABEL, DEFAULT_TABLE_CONTEXT } from "../../lib/Const";
 import { MoreOutlined } from '@ant-design/icons';
-import { buildURL, drawDate } from "../../lib/Utils";
-import EditForm from "../../lib/EditForm";
-import { CONTOUR_ADMIN } from "../../lib/ModuleConst"
+import { drawBoolIcon, buildURL } from "../../lib/Utils";
+import ProgUserGroupForm from "./ProgUserGroupForm";
+import { CONTOUR_ADMIN, MODULE_CREDENTIAL } from "../../lib/ModuleConst";
 import { buildPrintMenu, buildEntityPrintMenu } from '../../lib/stddialogs/PrintDialog';
-import AuditForm from './AuditForm';
-import { DateInputRange } from '../../lib/DateInput';
-import DataLookup from '../../lib/DataLookup';
-import moment from 'moment';
-import 'moment-duration-format';
-import AuditEventSelect from './AuditEventSelect';
-import { responsiveMobileColumn, isMobile } from '../../lib/Responsive';
 
-
-const MOD_TITLE = "Просмотр логов";
-const MODE_HELP_ID = "/help/audit";
+const MOD_TITLE = "Группы пользователей";
+const MODE_HELP_ID = "/help/progusergroup";
 const CONTOUR = CONTOUR_ADMIN;
+const MODULE = MODULE_CREDENTIAL;
 
-// Сущность (в CamelCase)
-const ENTITY = "Log";
+// Сущность
+const ENTITY = "Progusergroup";
 // URI для использования формой со списком (текущей) и формой добавления/изменения
 const URI_FOR_GET_LIST = buildURL(CONTOUR, MODULE, ENTITY) + "/getlist";
 const URI_FOR_GET_ONE = buildURL(CONTOUR, MODULE, ENTITY) + "/get";
+const URI_FOR_SAVE = buildURL(CONTOUR, MODULE, ENTITY) + "/save";
+const URI_FOR_DELETE = buildURL(CONTOUR, MODULE, ENTITY) + "/delete";
 
 // позиция в меню
 // в subsystem - key верхнего меню
@@ -45,103 +36,53 @@ const MNU_MENU = MODULE.name;
 const NAME_MENU = MODULE.title;
 // в submenu - key бокового подменю (финальный пункт)
 // его имя равно имени модуля
-const MNU_SUMMENU = MODULE.name + ".sm1";
+const MNU_SUMMENU = MODULE.name + ".progusergroup";
 // автоматическое обновление при монтировании компонента
 const AUTO_REFRESH = true;
-
 
 // колонки в таблице
 const COLUMNS = [
     {
-        title: 'Дата/Время',
-        dataIndex: 'datetime',
-        sorter: false,
-        defaultSortOrder: "descend",
-        render: (data) => <div>{moment(data).format("DD.MM.YYYY")}<br />
-            {moment(data).format("H:mm:ss.SSS")}</div>,
-        renderForFilter: drawDate,
-    },
-    {
-        title: 'Событие',
-        dataIndex: 'kind',
+        title: 'Имя',
+        dataIndex: 'progusergroupName',
+        sorter: true,
         ellipsis: true,
-        sorter: false,
-        render: (data) => EVENT_KINDS[data],
+        defaultSortOrder: 'ascend',
     },
     {
-        title: 'Сущность/ Идентификатор',
+        title: 'Описание',
+        dataIndex: 'progusergroupNote',
+        sorter: true,
         ellipsis: true,
-        dataIndex: 'entity',
-        sorter: false,
-        render: (data, rec) => <div>{data ? data : "-"}<br />{rec.idValue ? " Id: " + rec.idValue[0] : ""}</div>,
-        responsive: responsiveMobileColumn()
     },
     {
-        title: 'Пользователь',
-        dataIndex: 'proguser',
-        ellipsis: true,
-        sorter: false,
-        render: (data) => data ? data.proguserName : "-",
-        responsive: responsiveMobileColumn()
-    },
-    {
-        title: 'Адрес',
-        dataIndex: 'path',
-        ellipsis: true,
-        sorter: false,
-        responsive: responsiveMobileColumn()
-    },
-    {
-        title: 'Время выполнения',
-        dataIndex: 'duration',
-        sorter: false,
-        render: (data) => {
-            return moment.duration(data).format("hh [час] mm [мин] ss [сек] S [мсек]")
-        },
-        responsive: responsiveMobileColumn()
-    },
+        title: 'Видимость',
+        dataIndex: 'progusergroupVisible',
+        render: drawBoolIcon,
+        sorter: true,
+    }
 ]
 
 // Уникальный идентификатор формы редактировавания
 const EDIT_FORM_ID = ENTITY.toLowerCase() + "-frm";
 // Форма для редактирования
 const buildForm = (form) => {
-    return <AuditForm form={form} initialValues={{}} />
+    return <ProgUserGroupForm form={form} initialValues={{}} />
 }
 // размер формы, -1 - по умолчанию, FORM_MAX_WIDTH - максимальная ширина
-const FORM_WIDTH = isMobile() ? -1 : "50%";
+const FORM_WIDTH = -1;
 
 // Создание компонент для фильтров
 // key это уникальное имя фильтра, попадает в REST API
 const buildFilters = () => {
     return <React.Fragment>
-        <Primary>
-            <DateInputRange key="dateRange" allowClear={false} />
-            <span>Пользователь:</span>
-            <DataLookup.ProgUser key="proguserId" style={{ width: 280 }} allowClear={true} />
-        </Primary>
-        <span>События:</span>
-        <AuditEventSelect key="kinds" allowClear={true} style={{ width: 280 }} />
-        <span>Идентификатор:</span>
-        <InputNumber key="idValue" style={{ width: 80 }} />
-        <span>Выполнение более (мсек):</span>
-        <InputNumber key="duration" style={{ width: 80 }} />
+
     </React.Fragment>
 }
 // начальное значение фильтров
-// если значение фильра не объект, а простое значение, 
-// то имя свойства компонента принимается defaultValue
+// если значение фильра не объект, а простое значение,
+// то значение имени свойства компонента принимается как defaultValue компонента
 const initFilters = {
-    dateRange: [moment().startOf('month'), moment().endOf('month')]
-}
-
-const storeFilters = {
-    dateRange:{
-        transformValue:transformRange
-    },
-    kinds:{},
-    idValue:{},
-    duration:{}
 }
 
 // дополнительные команды
@@ -155,14 +96,15 @@ const buildMenuCommand = (config, handleMenuClick) => {
 // обрабочик меню
 const buildMenuHandler = (config) => {
     return (ev) => {
+        console.log('click', ev);
     }
 }
 
-
-// меню записи
+// меню для записи
 const recordMenu = (config, record) => (
     <React.Fragment>
         {buildEntityPrintMenu(ENTITY, record, config)}
+        <Menu.Divider />
     </React.Fragment>
 )
 
@@ -170,17 +112,18 @@ const recordMenu = (config, record) => (
 // Основной функциональный компонент
 //===============================================================================
 /**
- * Таблица передает на сервер post-запрос в теле которого 
+ * Таблица передает на сервер post-запрос в теле которого
  * pagination - информация о странице
  * sort - сортировка
  * filters - фильтры (+ быстрые фильтры начинаются с quick.*)
  * search - строка полнотекстового поиска
  */
-const Audit = (props) => {
+const ProgUserGroup = (props) => {
     let [formVisible, setFormVisible] = React.useState(false);
     const [topLayer, setTopLayer] = React.useState([]);
     let [editorContext] = React.useState({
-        uriForGetOne: URI_FOR_GET_ONE
+        uriForGetOne: URI_FOR_GET_ONE,
+        uriForSave: URI_FOR_SAVE,
     });
     const [tableInterface] = React.useState(Object.assign({}, DEFAULT_TABLE_CONTEXT));
     const [form] = Form.useForm();
@@ -192,7 +135,8 @@ const Audit = (props) => {
         form,
         tableInterface,
         destroyDialog: (dlgId) => {
-            setTopLayer([...topLayer.filter(c => c.props.id != dlgId)]);
+            // нужно через timeout так как после вызова destroyDialog следуют обращения к state
+            setTimeout(() => { setTopLayer([...topLayer.filter(c => c.props.id != dlgId)]) }, 100)
         }
     }));
 
@@ -203,17 +147,18 @@ const Audit = (props) => {
     }, [tableInterface])
 
 
-    const callForm = React.useCallback((record) => {
-        editorContext.id = {
-            logId: record.logId,
-            datetime: record.datetime
-        };
+    const callForm = React.useCallback((id) => {
+        editorContext.id = id;
         setFormVisible(true);
     }, [editorContext])
 
     // тут формируются кнопки
     const buttons = [
+        <Button key="del" onClick={() => tableInterface.deleteData()}
+            disabled={tableInterface.isLoading() || tableInterface.getSelectedRows().length == 0}>{BUTTON_DEL_LABEL}</Button>,
         <Button key="refresh" onClick={() => tableInterface.refreshData()}>{BUTTON_REFRESH_LABEL}</Button>,
+        <Button key="add" onClick={() => callForm()}
+            type="primary">{BUTTON_ADD_LABEL}</Button>
     ];
     if (menuCommand) {
         buttons.push(<Dropdown.Button key="more"
@@ -221,12 +166,15 @@ const Audit = (props) => {
             trigger="click"
             overlay={menuCommand} icon={<MoreOutlined />} />);
     }
-    if (isMobile()) {
-        const filters = buildFilters();
-        buttons.push(<FilterButton key="filter" filters={filters}
-            onChange={(fc) => setFilters(fc)}
-            initValues={initFilters} />);
-    }
+
+    const afterEdit = React.useCallback((values) => {
+        tableInterface.updateRecord(values);
+        setUpdateRecords([...updateRecords, values])
+    }, [tableInterface, updateRecords])
+    const afterAdd = React.useCallback((values) => {
+        tableInterface.insFirstRecord(values);
+        setUpdateRecords([...updateRecords, values])
+    }, [tableInterface, updateRecords])
 
     return (
         <App subsystem={MNU_SUBSYSTEM} menu={MNU_MENU} submenu={MNU_SUMMENU}
@@ -237,22 +185,22 @@ const Audit = (props) => {
             <ModuleHeader
                 title={MOD_TITLE}
                 onSearch={value => {
-                    tableInterface.requestParams.search = value ? value : undefined;
+                    tableInterface.requestParams.search = value;
                     tableInterface.refreshData();
                 }}
                 buttons={buttons}
             />
-            <FilterPanelExt onChange={(fc) => setFilters(fc)} initValues={initFilters} storeFilter={storeFilters}>
+            <FilterPanelExt onChange={(fc) => setFilters(fc)} initValues={initFilters}>
                 {buildFilters()}
             </FilterPanelExt>
             <DataTable className="mod-main-table"
                 uri={{
-                    forSelect: URI_FOR_GET_LIST
+                    forSelect: URI_FOR_GET_LIST,
+                    forDelete: URI_FOR_DELETE
                 }}
                 columns={COLUMNS}
-                defaultFilters={initFilters}
                 autoRefresh={AUTO_REFRESH}
-                editCallBack={(record) => callForm(record)}
+                editCallBack={(record) => callForm(record.progusergroupId)}
                 interface={tableInterface}
                 onSelectedChange={() => forceUpdate()}
                 onAfterRefresh={() => setUpdateRecords([])}
@@ -263,32 +211,38 @@ const Audit = (props) => {
                     form,
                     tableInterface,
                     idName: ENTITY.charAt(0).toLowerCase() + ENTITY.slice(1) + "Id",
-                    'destroyDialog': (dlgId) => {
-                        // нужно через timeout так как после вызова destroyDialog следуют обращения к state
-                        setTimeout(() => { setTopLayer([...topLayer.filter(c => c.props.id != dlgId)]) }, 100)
+                    destroyDialog: (dlgId) => {
+                        setTopLayer([...topLayer.filter(c => c.props.id != dlgId)])
                     }
                 }, record)}
-                idName={"datetime"}
+                idName="progusergroupId"
             />
             <EditForm
                 id={EDIT_FORM_ID}
-                title={"Запись лога"}
+                copyButtonFlag={true}
                 visible={formVisible}
                 form={form}
                 width={FORM_WIDTH}
                 editorContext={editorContext}
                 afterSave={(response) => {
                     setFormVisible(false);
+                    if (response) {
+                        if (!editorContext.id) {
+                            afterAdd(response)
+                        } else {
+                            afterEdit(response)
+                        }
+                    }
                 }}
+                afterCopy={afterAdd}
                 afterCancel={() => {
                     setFormVisible(false);
                 }}
-                idName={ENTITY.charAt(0).toLowerCase() + ENTITY.slice(1) + "Id"}
-            >
+                idName={ENTITY.charAt(0).toLowerCase() + ENTITY.slice(1) + "Id"}>
                 {buildForm(form)}
             </EditForm>
             {topLayer.map(item => item)}
         </App>
     )
 }
-export default withRouter(Audit);
+export default withRouter(ProgUserGroup);

@@ -1,8 +1,10 @@
 import React from 'react';
-import { Form, Input } from 'antd';
+import { Form, Input, Checkbox } from 'antd';
 import { FORM_ITEMS_LAYOUT } from "../../lib/Const";
-import DataSelect from "../../lib/DataSelect";
-import DataLookup from '../../lib/DataLookup';
+import { intFlagFromCheckboxEvent } from "../../lib/Utils";
+import { OmitProps } from 'antd/lib/transfer/ListBody';
+import { Select } from 'antd';
+
 
 const ProguserForm = (props) => {
     const firstInputRef = React.useRef(null);
@@ -10,10 +12,24 @@ const ProguserForm = (props) => {
     React.useEffect(() => {
         setTimeout(() => {
             firstInputRef.current.focus({
-                    cursor: 'end',
+                cursor: 'end',
             })
         }, 100);
     });
+
+    // adminTypeFlag - Флаг того, что пользователь администратор
+    const [proguserType, setProguserType] = React.useState(props.initialValues["proguserType"] === 1);
+    const initialProguserType = props.initialValues["proguserType"] === 1;
+    React.useEffect(() => {
+        setProguserType(initialProguserType);
+    }, [initialProguserType]);
+
+    // statusIdFlag - Флаг того, что пользователь активный
+    const [statusId, setStatusId] = React.useState(props.initialValues["statusId"] === 1);
+    const initialStatusId = props.initialValues["statusId"] === 1;
+    React.useEffect(() => {
+        setStatusId(initialStatusId);
+    }, [initialStatusId]);
 
     return <Form
         {...FORM_ITEMS_LAYOUT}
@@ -24,46 +40,50 @@ const ProguserForm = (props) => {
         initialValues={props.initialValues}>
         <Form.Item
             name='statusId'
-            label='Статус'
-            normalize={(value)=>parseInt(value)}
+            label='Активный'
+            valuePropName='checked'
+            getValueFromEvent={intFlagFromCheckboxEvent} // Устанавливает в значение из proguserType
             rules={[
                 { required: true }
-            ]}>
-            <DataSelect.CapCodeSelect capCodeType={13} ref={firstInputRef} displayValue={props.initialValues["statusDisplay"]}/>
+            ]}
+            labelCol={{ span: 16 }}
+            className='statusIdCheckBox'
+            >
+            <Checkbox onChange={() => {
+                setStatusId(props.form.getFieldValue("StatusId") === 1);
+            }} />
         </Form.Item>
         <Form.Item
             name='proguserName'
-            label='Наименование'
+            label='Имя'
             rules={[
                 { required: true },
                 { max: 50 }
             ]}>
-            <Input  />
+            <Input ref={firstInputRef} />
         </Form.Item>
         <Form.Item
-            name='proguserFullname'
-            label='Описание'
+            name='proguserFullName'
+            label='Полное имя'
             rules={[
                 { max: 50 }
             ]}>
-            <Input  />
+            <Input ref={firstInputRef} />
         </Form.Item>
         <Form.Item
-            name='proguserchannelAddress'
-            label='E-mail'
-            rules={[
-                { max: 128 },
-                { type: 'email'}
-                ]}>
-            <Input  />
-        </Form.Item>
-        <Form.Item
-            name='subject'
-            label='ОАУ'
+            name='proguserType'
+            label='Администратор'
+            valuePropName='checked'
+            getValueFromEvent={intFlagFromCheckboxEvent} // Устанавливает в значение из proguserType
             rules={[
                 { required: true }
-            ]}>
-            <DataLookup.Subject />
+            ]}
+            labelCol={{ span: 16 }}
+            className='proguserTypeCheckBox'
+            >
+            <Checkbox onChange={() => {
+                setProguserType(props.form.getFieldValue("proguserType") === 1);
+            }} />
         </Form.Item>
     </Form>
 }

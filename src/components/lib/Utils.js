@@ -57,6 +57,7 @@ export const drawInt = (data, record) => {
     }
 }
 
+// Получение значения из чекбокса или подобного
 export const intFlagFromCheckboxEvent = (event) => event.target.checked ? 1 : 0;
 
 export const buildSortFromColumns = (sorts) => {

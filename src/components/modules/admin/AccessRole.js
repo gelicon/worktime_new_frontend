@@ -36,7 +36,7 @@ const MNU_MENU = MODULE.name;
 const NAME_MENU = MODULE.title;
 // в submenu - key бокового подменю (финальный пункт)
 // его имя равно имени модуля
-const MNU_SUMMENU = MODULE.name + ".sm2";
+const MNU_SUMMENU = MODULE.name + ".accessrole";
 // автоматическое обновление при монтировании компонента
 const AUTO_REFRESH = true;
 

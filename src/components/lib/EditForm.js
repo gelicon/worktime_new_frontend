@@ -217,6 +217,7 @@ const EditForm = (props) => {
         status.modified = true;
     }
 
+    // Подтверждение отказа от внесенных изменений
     const handleCancel = () => {
         if (status.modified) {
             confirm(MSG_CONFIRM_MODIFY, () => {

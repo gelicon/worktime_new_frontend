@@ -41,7 +41,7 @@ const MNU_MENU = MODULE.name;
 const NAME_MENU = MODULE.title;
 // в submenu - key бокового подменю (финальный пункт)
 // его имя равно имени модуля
-const MNU_SUMMENU = MODULE.name + ".sm1";
+const MNU_SUMMENU = MODULE.name + ".proguser";
 // автоматическое обновление при монтировании компонента
 const AUTO_REFRESH = true;
 
@@ -49,10 +49,8 @@ const AUTO_REFRESH = true;
 const COLUMNS = [
     {
         title: 'Статус',
-        dataIndex: 'statusDisplay',
-        sorter: true,
-        width: "90px",
-        responsive:responsiveMobileColumn()
+        dataIndex: 'proguserStatusName',
+        width: "90px"
     },
     {
         title: 'Имя',
@@ -62,18 +60,15 @@ const COLUMNS = [
         defaultSortOrder: 'ascend',
     },
     {
-        title: 'Описание',
-        dataIndex: 'proguserFullname',
+        title: 'Полное имя',
+        dataIndex: 'proguserFullName',
         sorter: true,
-        ellipsis: true,
-        responsive:responsiveMobileColumn()
+        ellipsis: true
     },
     {
-        title: 'E-mail',
-        dataIndex: 'proguserchannelAddress',
-        sorter: true,
-        ellipsis: true,
-        responsive:responsiveMobileColumn()
+        title: 'Тип',
+        dataIndex: 'proguserTypeName',
+        ellipsis: true
     }
 ]
 

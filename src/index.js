@@ -7,6 +7,7 @@ import ReferenceBooks from "./components/contour/ReferenceBooks";
 import Error from "./components/Error";
 import Admin from "./components/contour/Admin";
 import ProgUser from "./components/modules/admin/ProgUser";
+import ProgUserGroup from "./components/modules/admin/ProgUserGroup";
 import AccessRole from "./components/modules/admin/AccessRole";
 import ControlObject from "./components/modules/admin/ControlObject";
 import ApplicationRole from "./components/modules/admin/ApplicationRole";
@@ -47,6 +48,7 @@ ReactDOM.render(
                 <Route exact path='/refbooks'><ReferenceBooks /></Route>
                 {/* Контур Администрирование */}
                 <Route exact path='/admin'><Admin /></Route>
+                <Route exact path='/progusergroup'><ProgUserGroup /></Route>
                 <Route exact path='/proguser'><ProgUser /></Route>
                 <Route exact path='/accessrole'><AccessRole /></Route>
                 <Route exact path='/controlobject'><ControlObject /></Route>

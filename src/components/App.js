@@ -72,16 +72,19 @@ const getSubMenu = (sys, clsMenuName) => {
             case MODULE_CREDENTIAL.name:
                 menuItemsAdmin.push(
                     <SubMenu className={clsmmenu} key={MODULE_CREDENTIAL.name} title={MODULE_CREDENTIAL.title}>
-                        <Menu.Item key={MODULE_CREDENTIAL.name + ".sm1"} >
+                        <Menu.Item key={MODULE_CREDENTIAL.name + ".progusergroup"} >
+                            <Link to="/progusergroup">Группы пользователей</Link>
+                        </Menu.Item>
+                        <Menu.Item key={MODULE_CREDENTIAL.name + ".proguser"} >
                             <Link to="/proguser">Пользователи</Link>
                         </Menu.Item>
-                        <Menu.Item key={MODULE_CREDENTIAL.name + ".sm2"} >
+                        <Menu.Item key={MODULE_CREDENTIAL.name + ".accessrole"} >
                             <Link to="/accessrole">Роли</Link>
                         </Menu.Item>
-                        <Menu.Item key={MODULE_CREDENTIAL.name + ".sm3"} >
+                        <Menu.Item key={MODULE_CREDENTIAL.name + ".controlobjectrole"} >
                             <Link to="/controlobject">Права</Link>
                         </Menu.Item>
-                        <Menu.Item key={MODULE_CREDENTIAL.name + ".sm4"} >
+                        <Menu.Item key={MODULE_CREDENTIAL.name + ".applicationrole"} >
                             <Link to="/applicationrole">Доступ к модулям</Link>
                         </Menu.Item>
                     </SubMenu>
