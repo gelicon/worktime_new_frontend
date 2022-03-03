@@ -3,8 +3,6 @@ import { Button, Menu, Dropdown, Form } from 'antd';
 import DataTable from "../../lib/DataTable";
 import App from '../../App';
 import ModuleHeader from "../../lib/ModuleHeader";
-import { FilterPanelExt } from "../../lib/FilterPanelExt";
-import {FilterButton} from '../../lib/FilterButton';
 import { withRouter } from "react-router";
 import { BUTTON_ADD_LABEL, BUTTON_DEL_LABEL, BUTTON_REFRESH_LABEL, DEFAULT_TABLE_CONTEXT } from "../../lib/Const";
 import { MoreOutlined, UsergroupAddOutlined } from '@ant-design/icons';
@@ -15,7 +13,6 @@ import { CONTOUR_ADMIN, MODULE_CREDENTIAL } from "../../lib/ModuleConst";
 import { buildPrintMenu, buildEntityPrintMenu } from '../../lib/stddialogs/PrintDialog';
 import { ManageAccessRoleForm } from "./ManageAccessRoleForm";
 import { SetPasswordProgUserForm } from "./SetPasswordProgUserForm";
-import {responsiveMobileColumn, isMobile} from '../../lib/Responsive';
 
 const MOD_TITLE = "Пользователи";
 const MODE_HELP_ID = "/help/proguser";
@@ -80,19 +77,6 @@ const buildForm = (form) => {
 }
 // размер формы, -1 - по умолчанию, FORM_MAX_WIDTH - максимальная ширина
 const FORM_WIDTH = -1;
-
-// Создание компонент для фильтров
-// key это уникальное имя фильтра, попадает в REST API
-const buildFilters = () => {
-    return <React.Fragment>
-
-    </React.Fragment>
-}
-// начальное значение фильтров
-// если значение фильра не объект, а простое значение,
-// то значение имени свойства компонента принимается как defaultValue компонента
-const initFilters = {
-}
 
 // дополнительные команды
 // если меню нет, то и кнопки нет
@@ -162,7 +146,6 @@ const recordMenu = (config, record) => (
  * Таблица передает на сервер post-запрос в теле которого
  * pagination - информация о странице
  * sort - сортировка
- * filters - фильтры (+ быстрые фильтры начинаются с quick.*)
  * search - строка полнотекстового поиска
  */
 const ProgUser = (props) => {
@@ -187,13 +170,6 @@ const ProgUser = (props) => {
         }
     }));
 
-
-    const setFilters = React.useCallback((config) => {
-        tableInterface.requestParams.filters = config;
-        tableInterface.refreshData();
-    }, [tableInterface])
-
-
     const callForm = React.useCallback((id) => {
         editorContext.id = id;
         setFormVisible(true);
@@ -212,12 +188,6 @@ const ProgUser = (props) => {
             className="more-dropbutton"
             trigger="click"
             overlay={menuCommand} icon={<MoreOutlined />} />);
-    }
-    if(isMobile()) {
-        const filters = buildFilters();
-        buttons.push(<FilterButton key="filter" filters={filters} 
-                        onChange={(fc) => setFilters(fc)} 
-                        initValues={initFilters}/>);
     }
 
     const afterEdit = React.useCallback((values) => {
@@ -243,9 +213,6 @@ const ProgUser = (props) => {
                 }}
                 buttons={buttons}
             />
-            <FilterPanelExt onChange={(fc) => setFilters(fc)} initValues={initFilters}>
-                {buildFilters()}
-            </FilterPanelExt>
             <DataTable className="mod-main-table"
                 uri={{
                     forSelect: URI_FOR_GET_LIST,

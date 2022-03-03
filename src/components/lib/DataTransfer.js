@@ -35,12 +35,12 @@ const DataTransfer = (props) => {
     const load = React.useCallback(() => {
         // setLoading(true);
         if (props.uri) {
-            console.log("DataTransfer load list");
+            console.log("DataTransfer load list url=" + props.uri);
+            console.log("props.params=" + JSON.stringify(props.params));
             requestToAPI.post(props.uri, props.params)
                 .then(response => {
                     // если компонент размонтирован не надо устанавливать данные
                     if (!contextParams.mountFlag) return;
-                    // setLoading(false);
                     response = response.result;
                     setData(response.map(val => {
                         val.key = val[Object.keys(val)[0]];
@@ -50,16 +50,13 @@ const DataTransfer = (props) => {
                 .catch(error => {
                     // если компонент размонтирован не надо устанавливать данные
                     if (!contextParams.mountFlag) return;
-                    // setLoading(false);
                     notification.error({
                         message: MSG_NO_RECORD_FORGETONE,
                         description: error.message,
                     })
-                    // props.afterCancel();
                     setData([]);
                 })
         } else {
-            // setLoading(false);
             setData([]);
         }
     }, [props, contextParams.mountFlag])
@@ -79,7 +76,7 @@ const DataTransfer = (props) => {
     return (
         <Transfer
             dataSource={data ?? []}
-            titles={props.titles ?? ["Доступно", "Выбрано"]}
+            titles={props.titles ?? ["Не назначено", "Назначено"]}
             targetKeys={targetKeys}
             selectedKeys={selectedKeys}
             onChange={onChange}

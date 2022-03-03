@@ -162,7 +162,10 @@ export const buildURL = (contour, module, entity) => {
         entity.toLowerCase();
 }
 
+// Параметры для url по умолчанию для выборки всего без фильтров
 export const genDefParamsForGetAllList = (name) => {
+    // Если поле сортировки не задано - сортируем по первому в выборке
+    const name1 = (name ? name : "1")
     return {
         "pagination": {
             "current": 1,
@@ -170,7 +173,8 @@ export const genDefParamsForGetAllList = (name) => {
         },
         "sort": [
             {
-                "field": name,
+//                "field": name,
+                "field": name1,
                 "order": "ascend"
             }
         ]
