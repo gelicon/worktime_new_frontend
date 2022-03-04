@@ -93,12 +93,16 @@ const buildMenuHandler = (config) => {
     }
 }
 
+// Управление ролями пользователя
 const manageAccessRole = (ev, config, record) => {
     ev.domEvent.stopPropagation(); // чтобы предовратить запуск окна редактирования
     // тут можно размещать url для сохранения и загрузки
     config.editorContext = {
         id: record[config.tableInterface.getProperties().props.idName],
+        // Урл для получения одной ProguserAccessRoleView по proguser_id
+        // в accessRoleIds хранится список доступных пользователю ролей
         uriForGetOne: buildURL(CONTOUR, MODULE, ENTITY) + "/roles/get",
+        // Урл для сохранения СПИСКА ролей пользователя
         uriForSave: buildURL(CONTOUR, MODULE, ENTITY) + "/roles/save",
     }
     // формируем диалог
