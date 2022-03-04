@@ -4,8 +4,8 @@ import DataTable from "../../lib/DataTable";
 import App from '../../App';
 import ModuleHeader from "../../lib/ModuleHeader";
 import { withRouter } from "react-router";
-import { BUTTON_ADD_LABEL, BUTTON_DEL_LABEL, BUTTON_REFRESH_LABEL, DEFAULT_TABLE_CONTEXT } from "../../lib/Const";
-import { MoreOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { BUTTON_ADD_LABEL, BUTTON_DEL_LABEL, BUTTON_REFRESH_LABEL, DEFAULT_TABLE_CONTEXT, BUTTON_PRINT_LABEL } from "../../lib/Const";
+import { MoreOutlined, UsergroupAddOutlined} from '@ant-design/icons';
 import { buildURL } from "../../lib/Utils";
 import EditForm, { ShowModal } from "../../lib/EditForm";
 import ProgUserForm from "./ProgUserForm";
@@ -13,6 +13,7 @@ import { CONTOUR_ADMIN, MODULE_CREDENTIAL } from "../../lib/ModuleConst";
 import { buildPrintMenu, buildEntityPrintMenu } from '../../lib/stddialogs/PrintDialog';
 import { ManageAccessRoleForm } from "./ManageAccessRoleForm";
 import { SetPasswordProgUserForm } from "./SetPasswordProgUserForm";
+import ExportJsonExcel from 'js-export-excel';
 
 const MOD_TITLE = "Пользователи";
 const MODE_HELP_ID = "/help/proguser";
@@ -179,13 +180,55 @@ const ProgUser = (props) => {
         setFormVisible(true);
     }, [editorContext])
 
+    const PrintProgUser = () => {
+        console.log("Печатаем пользователей");
+        const content = document.getElementById("printContext")
+        let pri
+        const iframe = document.createElement('iframe')
+//       iframe.setAttribute('title', "Пользователи")
+//        iframe.setAttribute('id', "Пользователи")
+        iframe.setAttribute('style', 'height: 0px; width: 0px; position: absolute;')
+        document.body.appendChild(iframe)
+        pri = iframe.contentWindow
+        pri.document.open()
+        pri.document.write(content.innerHTML)
+        pri.document.close()
+        pri.focus()
+        pri.print()
+    };
+
+    
+    const downloadExcel = () => {
+     var option={};
+     option.fileName = "excel";
+     let dataTable = [
+        { Country: "Россия", Capital: "Москва" },
+        { Country: "Украина", Capital: "Киев" },
+        { Country: "Германия", Capital: "Берлин" },
+        { Country: "США", Capital: "Вашингтон" },
+    ];
+     option.datas = [
+        {
+          sheetData:dataTable,
+          sheetName: "sheet",
+          sheetFilter: ["Country", "Capital"],
+          sheetHeader: ["Страна", "Столица"],
+          columnWidths: [40, 50],
+        },
+      ];
+      var toExcel = new ExportJsonExcel(option); //new
+      toExcel.saveExcel();
+    }
+
     // тут формируются кнопки
     const buttons = [
         <Button key="del" onClick={() => tableInterface.deleteData()}
             disabled={tableInterface.isLoading() || tableInterface.getSelectedRows().length == 0}>{BUTTON_DEL_LABEL}</Button>,
         <Button key="refresh" onClick={() => tableInterface.refreshData()}>{BUTTON_REFRESH_LABEL}</Button>,
         <Button key="add" onClick={() => callForm()}
-            type="primary">{BUTTON_ADD_LABEL}</Button>
+            type="primary">{BUTTON_ADD_LABEL}</Button>,
+        <Button key="print" onClick={() => PrintProgUser()}>{BUTTON_PRINT_LABEL}</Button>,
+        <Button key="print" onClick={() => downloadExcel()}>Excel</Button>,
     ];
     if (menuCommand) {
         buttons.push(<Dropdown.Button key="more"
@@ -217,7 +260,7 @@ const ProgUser = (props) => {
                 }}
                 buttons={buttons}
             />
-            <DataTable className="mod-main-table"
+            <DataTable className="mod-main-table" id="printContext"
                 uri={{
                     forSelect: URI_FOR_GET_LIST,
                     forDelete: URI_FOR_DELETE

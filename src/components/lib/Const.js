@@ -1,6 +1,7 @@
 export const BUTTON_ADD_LABEL = "Добавить";
 export const BUTTON_DEL_LABEL = "Удалить";
 export const BUTTON_REFRESH_LABEL = "Обновить";
+export const BUTTON_PRINT_LABEL = "Напечатать";
 
 export const MSG_PAGENOTFOUND = `Компонент по адресу ${window.location.pathname} не найден `;
 export const MSG_CONFIRM_DELETE = "Вы действительно хотите удалить {0} записей";

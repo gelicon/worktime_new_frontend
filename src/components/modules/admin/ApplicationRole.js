@@ -50,7 +50,7 @@ const COLUMNS = [
         dataIndex: 'applicationCode',
         sorter: true,
         ellipsis: true,
-        width: "80px",
+        //width: "330px",
         responsive:responsiveMobileColumn()
     },
     {
