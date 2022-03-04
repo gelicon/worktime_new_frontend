@@ -63,10 +63,15 @@ const EditForm = (props) => {
         setLoading(true);
         if (props.editorContext.uriForGetOne) {
             console.log(props.editorContext.id ? "Load for id = " + props.editorContext.id : "Load for add");
-            requestToAPI.post(props.editorContext.uriForGetOne, props.editorContext.id ?? "")
+            const uri = props.editorContext.uriForGetOne;
+            console.log("uri=" + uri);
+            requestToAPI.post(uri, props.editorContext.id ?? "")
                 .then(response => {
                     // если компонент размонтирован не надо устанавливать данные
-                    if (!contextParams.mountFlag) return;
+                    if (!contextParams.mountFlag) {
+                        console.log("компонент размонтирован");
+                        return;
+                    }
                     if (props.onAfterLoad) {
                         response = props.onAfterLoad(response) ?? response;
                     }

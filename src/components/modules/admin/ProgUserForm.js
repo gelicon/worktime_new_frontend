@@ -2,8 +2,6 @@ import React from 'react';
 import { Form, Input, Checkbox } from 'antd';
 import { FORM_ITEMS_LAYOUT } from "../../lib/Const";
 import { intFlagFromCheckboxEvent } from "../../lib/Utils";
-import { OmitProps } from 'antd/lib/transfer/ListBody';
-import { Select } from 'antd';
 
 
 const ProguserForm = (props) => {

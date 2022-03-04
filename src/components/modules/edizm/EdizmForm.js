@@ -71,18 +71,6 @@ const EdizmForm = (props) => {
             <Checkbox></Checkbox>
         </Form.Item>
 
-        {/* <Form.Item
-            name="edizmDate"
-            label="Дата">
-            <DateInput />
-        </Form.Item>
-
-        <Form.Item
-            name="edizmNumber"
-            label="Номер">
-            <Numbering docEntityName="invoice" params={{ year: year }} />
-        </Form.Item> */}
-
     </Form>
 }
 

@@ -5,14 +5,13 @@ import App from '../../App';
 import ModuleHeader from "../../lib/ModuleHeader";
 import { withRouter } from "react-router";
 import { BUTTON_ADD_LABEL, BUTTON_DEL_LABEL, BUTTON_REFRESH_LABEL, DEFAULT_TABLE_CONTEXT } from "../../lib/Const";
-import { MoreOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { MoreOutlined } from '@ant-design/icons';
 import { drawBoolIcon, buildURL } from "../../lib/Utils";
-import EditForm, { ShowModal } from "../../lib/EditForm";
+import EditForm from "../../lib/EditForm";
 import AccessRoleForm from "./AccessRoleForm";
 import { CONTOUR_ADMIN, MODULE_CREDENTIAL } from "../../lib/ModuleConst"
 import { buildPrintMenu, buildEntityPrintMenu } from '../../lib/stddialogs/PrintDialog';
 import {responsiveMobileColumn} from '../../lib/Responsive';
-import { ManageControlObjectRoleForm } from "./ManageControlObjectRoleForm";
 
 const MOD_TITLE = "Роли";
 const MODE_HELP_ID = "/help/accessrole";
@@ -103,32 +102,6 @@ const buildMenuHandler = (config) => {
     }
 }
 
-// Управление доступом к объектам контроля для роли
-const manageControlObjectRole = (ev, config, record) => {
-    ev.domEvent.stopPropagation(); // чтобы предовратить запуск окна редактирования
-    // тут можно размещать url для сохранения и загрузки
-    config.editorContext = {
-        id: record[config.tableInterface.getProperties().props.idName],
-        // Урл для получения одной ControlObjectRoleView по accessrole_id
-        // !!!!!!!!!!!!!!! Сделать!!!
-        // в accessRoleIds хранится список доступных пользователю ролей
-        uriForGetOne: buildURL(CONTOUR, MODULE, ENTITY) + "/controlobjectrole/getforaccessrole",
-        // Урл для сохранения СПИСКА 
-        // Сделать !!!!!!!!!!!!!!
-        uriForSave: buildURL(CONTOUR, MODULE, ENTITY) + "/controlobjectrole/saveforaccessrole",
-    }
-    // формируем диалог
-    const dialog = ShowModal({
-        ...config,
-        title: "Управление доступом на объекты для роли " + (record.accessRoleName || record.accessRoleName),
-        content: <ManageControlObjectRoleForm />,
-        idName: ENTITY.charAt(0).toLowerCase() + ENTITY.slice(1) + "Id",
-        width: 688,
-    });
-    // вставляем Modal в top layer
-    config.setTopLayer([...config.topLayer, dialog])
-}
-
 // const printDocument = (ev) => {
 //     ev.domEvent.stopPropagation(); // чтобы предовратить запуск окна редактирования
 //     console.log("print document");
@@ -139,8 +112,6 @@ const recordMenu = (config, record) => (
         // Управление доступом к объектам для роли
         <React.Fragment>
         {buildEntityPrintMenu(ENTITY, record, config)}
-        <Menu.Divider />
-        <Menu.Item key="manageAccessRole" icon={<UsergroupAddOutlined />} onClick={(ev) => manageControlObjectRole(ev, config, record)}>Доступы для роли</Menu.Item>
     </React.Fragment>
 )
 
