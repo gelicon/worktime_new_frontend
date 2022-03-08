@@ -46,9 +46,18 @@ const AUTO_REFRESH = true;
 // колонки в таблице
 const COLUMNS = [
     {
+        title: 'Доступ',
+        dataIndex: 'applicationRoleAccessFlag',
+        render: drawBoolIcon,
+        sorter: true,
+        defaultSortOrder: 'ascend',
+        width: "80px",
+    },
+    {
         title: 'Код',
         dataIndex: 'applicationCode',
         sorter: true,
+        defaultSortOrder: 'ascend',
         ellipsis: true,
         //width: "330px",
         responsive:responsiveMobileColumn()
@@ -58,14 +67,6 @@ const COLUMNS = [
         dataIndex: 'applicationName',
         sorter: true,
         ellipsis: true,
-        defaultSortOrder: 'ascend',
-    },
-    {
-        title: 'Доступ',
-        dataIndex: 'applicationRoleAccessFlag',
-        render: drawBoolIcon,
-        sorter: true,
-        width: "80px",
     },
 ]
 

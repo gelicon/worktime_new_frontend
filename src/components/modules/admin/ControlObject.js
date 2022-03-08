@@ -46,18 +46,19 @@ const AUTO_REFRESH = true;
 // колонки в таблице
 const COLUMNS = [
     {
-        title: 'Наименование',
-        dataIndex: 'controlObjectName',
-        sorter: true,
-        ellipsis: true,
-        defaultSortOrder: 'ascend',
-    },
-    {
         title: 'Доступ',
         dataIndex: 'controlObjectRoleAccessFlag',
         render: drawBoolIcon,
         sorter: true,
+        defaultSortOrder: 'ascend',
         width: "80px",
+    },
+    {
+        title: 'Наименование',
+        dataIndex: 'controlObjectName',
+        sorter: true,
+        defaultSortOrder: 'ascend',
+        ellipsis: true,
     },
     {
         title: 'Идентификатор',

@@ -79,13 +79,13 @@ const getSubMenu = (sys, clsMenuName) => {
                             <Link to="/proguser">Пользователи</Link>
                         </Menu.Item>
                         <Menu.Item key={MODULE_CREDENTIAL.name + ".accessrole"} >
-                            <Link to="/accessrole">Роли</Link>
+                            <Link to="/accessrole">Роли доступа</Link>
                         </Menu.Item>
                         <Menu.Item key={MODULE_CREDENTIAL.name + ".controlobjectrole"} >
-                            <Link to="/controlobject">Права</Link>
+                            <Link to="/controlobject">Права ролей</Link>
                         </Menu.Item>
                         <Menu.Item key={MODULE_CREDENTIAL.name + ".applicationrole"} >
-                            <Link to="/applicationrole">Доступ к модулям</Link>
+                            <Link to="/applicationrole">Доступ ролей к модулям</Link>
                         </Menu.Item>
                     </SubMenu>
                 );

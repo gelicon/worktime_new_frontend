@@ -333,6 +333,7 @@ const DataTable = React.forwardRef((props, ref) => {
 
     const downloadData = React.useCallback((params, succFn, errorFn) => {
         console.log("request params", params);
+        console.log("url for select=" + props.uri.forSelect);
         setLoading(true);
         requestToAPI.post(props.uri.forSelect, params)
             .then(response => {
