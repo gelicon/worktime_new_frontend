@@ -16,8 +16,9 @@ import logo from '../resources/images/logo.png';
 import teg from '../resources/images/teg.png';
 import {
     MODULE_CREDENTIAL, 
-    MODULE_EDIZM,
-    CONTOURS_WITH_MODULES, CONTOUR_ADMIN, MODULES, CONTOUR_REFBOOKS
+    MODULE_EDIZM, 
+    CONTOURS_WITH_MODULES, CONTOUR_ADMIN, MODULES, CONTOUR_REFBOOKS,
+    MODULE_ORGSTRUCT
 } from "./lib/ModuleConst";
 import { ChangePasswordForm } from "./lib/ChangePasswordForm";
 import { ShowModal } from "./lib/EditForm";
@@ -38,14 +39,14 @@ const { Content, Sider } = Layout;
 // здесь левое меню, в зависимости от subsystem
 const getSubMenu = (sys, clsMenuName) => {
     // Получим список всех модулей выбранного контура
-    console.log("sys=", sys);
+    console.log("Контур=", sys);
     let allModules = [];
     CONTOURS_WITH_MODULES.forEach((value, key) => {
         if (key.name === sys) {
             allModules.push(...value);
         }
     });
-    console.log("allModules=", allModules);
+    console.log("Все модули контура=", allModules);
     // Получим список всех доступных пользовтелю модулей
     const applicationList = getItemFromLocalStorage("modules");
     //console.log("applicationList=", applicationList);
@@ -53,13 +54,13 @@ const getSubMenu = (sys, clsMenuName) => {
     console.log("modules=", modules);
     // Отфильтруем список модулей контура так, чтобы остались только доступные пользователю модули контура
     const allowModules = allModules.filter(value => modules.indexOf(value.name) !== -1);
-    console.log("allowModules=", allowModules);
+    console.log("Доступные пользователю модули=", allowModules);
 
     const clsmmenu = clsMenuName || "main-menu";
 
-    let menuItems = [];
-    let menuItemsAdmin = [];
-    let menuItemsRefbooks = [];
+    let menuItems = []; // Корневое меню
+    let menuItemsRefbooks = []; // Меню Справочники
+    let menuItemsAdmin = []; // Меню Администрирование
     allowModules.forEach(value => {
         switch (value.name) {
             case MODULE_EDIZM.name:
@@ -69,42 +70,51 @@ const getSubMenu = (sys, clsMenuName) => {
                     </Menu.Item>
                 );
                 break;
-            case MODULE_CREDENTIAL.name:
-                menuItemsAdmin.push(
-                    <SubMenu className={clsmmenu} key={MODULE_CREDENTIAL.name} title={MODULE_CREDENTIAL.title}>
-                        <Menu.Item key={MODULE_CREDENTIAL.name + ".progusergroup"} >
-                            <Link to="/progusergroup">Группы пользователей</Link>
-                        </Menu.Item>
-                        <Menu.Item key={MODULE_CREDENTIAL.name + ".proguser"} >
-                            <Link to="/proguser">Пользователи</Link>
-                        </Menu.Item>
-                        <Menu.Item key={MODULE_CREDENTIAL.name + ".accessrole"} >
-                            <Link to="/accessrole">Роли доступа</Link>
-                        </Menu.Item>
-                        <Menu.Item key={MODULE_CREDENTIAL.name + ".controlobjectrole"} >
-                            <Link to="/controlobject">Права ролей</Link>
-                        </Menu.Item>
-                        <Menu.Item key={MODULE_CREDENTIAL.name + ".applicationrole"} >
-                            <Link to="/applicationrole">Доступ ролей к модулям</Link>
+            case MODULE_ORGSTRUCT.name:
+                menuItemsRefbooks.push(
+                    <SubMenu className={clsmmenu} key={MODULE_ORGSTRUCT.name} title={MODULE_ORGSTRUCT.title}>
+                        <Menu.Item key={MODULE_ORGSTRUCT.name + ".department"} >
+                            <Link to="/department">Отделы</Link>
                         </Menu.Item>
                     </SubMenu>
+                );
+                break;
+            case MODULE_CREDENTIAL.name:
+            menuItemsAdmin.push(
+                <SubMenu className={clsmmenu} key={MODULE_CREDENTIAL.name} title={MODULE_CREDENTIAL.title}>
+                    <Menu.Item key={MODULE_CREDENTIAL.name + ".progusergroup"} >
+                        <Link to="/progusergroup">Группы пользователей</Link>
+                    </Menu.Item>
+                    <Menu.Item key={MODULE_CREDENTIAL.name + ".proguser"} >
+                        <Link to="/proguser">Пользователи</Link>
+                    </Menu.Item>
+                    <Menu.Item key={MODULE_CREDENTIAL.name + ".accessrole"} >
+                        <Link to="/accessrole">Роли доступа</Link>
+                    </Menu.Item>
+                    <Menu.Item key={MODULE_CREDENTIAL.name + ".controlobjectrole"} >
+                        <Link to="/controlobject">Права ролей</Link>
+                    </Menu.Item>
+                    <Menu.Item key={MODULE_CREDENTIAL.name + ".applicationrole"} >
+                        <Link to="/applicationrole">Доступ ролей к модулям</Link>
+                    </Menu.Item>
+                </SubMenu>
                 );
                 break;
             default:
         }
     });
     // Засунем меню в подменю контура
-    if (menuItemsAdmin.length > 0) {
-        menuItems.push(
-            <SubMenu key={CONTOUR_ADMIN.name} title={CONTOUR_ADMIN.title} icon={CONTOUR_ADMIN.icon}>
-                {menuItemsAdmin}
-            </SubMenu>
-        );
-    }
     if (menuItemsRefbooks.length > 0) {
         menuItems.push(
             <SubMenu key={CONTOUR_REFBOOKS.name} title={CONTOUR_REFBOOKS.title} icon={CONTOUR_REFBOOKS.icon}>
                 {menuItemsRefbooks}
+            </SubMenu>
+        );
+    }
+    if (menuItemsAdmin.length > 0) {
+        menuItems.push(
+            <SubMenu key={CONTOUR_ADMIN.name} title={CONTOUR_ADMIN.title} icon={CONTOUR_ADMIN.icon}>
+                {menuItemsAdmin}
             </SubMenu>
         );
     }

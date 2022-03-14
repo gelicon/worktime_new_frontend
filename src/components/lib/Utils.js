@@ -228,6 +228,9 @@ export const setItemInLocalStorage = (key, value) => {
 }
 
 export const getItemFromLocalStorage = (key) => {
+    //console.log("key=", key);
+    //console.log("localStorage.user.login=", localStorage.getItem("user.login"));
+    //console.log("localStorage=", localStorage);
     return localStorage.getItem(key + "?" + (sessionStorage.getItem("user.login") ?? localStorage.getItem("user.login")));
 }
 

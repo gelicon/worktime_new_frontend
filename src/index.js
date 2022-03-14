@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import Main from './components/modules/Main';
 import Edizm from './components/modules/edizm/Edizm';
-import ReferenceBooks from "./components/contour/ReferenceBooks";
+//import ReferenceBooks from "./components/contour/ReferenceBooks";
 import Error from "./components/Error";
 import Admin from "./components/contour/Admin";
 import ProgUser from "./components/modules/admin/ProgUser";
@@ -11,6 +11,8 @@ import ProgUserGroup from "./components/modules/admin/ProgUserGroup";
 import AccessRole from "./components/modules/admin/AccessRole";
 import ControlObject from "./components/modules/admin/ControlObject";
 import ApplicationRole from "./components/modules/admin/ApplicationRole";
+
+import Department from './components/modules/worktime/Department/Department';
 
 import { MSG_PAGENOTFOUND, DEFAULT_DATE_FORMAT } from "./components/lib/Const";
 
@@ -43,9 +45,10 @@ ReactDOM.render(
     <ConfigProvider locale={ruRU} form={{ validateMessages }}>
         <BrowserRouter>
             <Switch>
-                <Route exact path='/'><Main /></Route>
+            <Route exact path='/'><Main /></Route>
+                {/*<Route exact path='/refbooks'><ReferenceBooks /></Route>*/}
                 <Route exact path='/edizm'><Edizm /></Route>
-                <Route exact path='/refbooks'><ReferenceBooks /></Route>
+                <Route exact path='/department'><Department /></Route>
                 {/* Контур Администрирование */}
                 <Route exact path='/admin'><Admin /></Route>
                 <Route exact path='/progusergroup'><ProgUserGroup /></Route>
